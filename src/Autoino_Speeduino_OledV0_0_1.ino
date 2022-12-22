@@ -2,7 +2,7 @@
 #include <SpeedData.h>
 
 #define Uno   //Descomente essa linha caso utilizar um Arduino UNO
-//#define Mega   //Descomente essa linha caso utilizar um Arduino Mega
+//#define Mega  //Descomente essa linha caso utilizar um Arduino Mega
 
 #ifdef Uno
 #include "SoftwareSerial.h"
