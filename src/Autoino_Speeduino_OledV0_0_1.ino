@@ -35,6 +35,8 @@ char TempAguaChar[3] = {0}; //variavel para armazenar RPM em char
 
 char TPSChar[3] = {0}; //variavel para armazenar TPS em char
 
+char MAPChar[3] = {0}; //variavel para armazenar MAP em char
+
 U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NO_ACK);  // Display which does not send AC
 
 void moldura() 
@@ -237,6 +239,21 @@ void MolduraTPS(float intTPS)
 }
 
 
+void MolduraMAP(float intMAP) 
+{
+
+  itoa(intMAP,MAPChar, 10); //converte para inteiro para char
+
+ //Seleciona a fonte de texto
+  u8g.setFont(u8g_font_8x13B); 
+  //Rotulo
+  u8g.drawStr( 75, 15, "MAP");
+  //Dados
+  u8g.drawStr( 70, 40, MAPChar);
+  
+}
+
+
 void MolduraTempAgua(int intTempAgua) 
 {
 
@@ -353,6 +370,16 @@ delay(2000);
     temp();
     //comb();
     MolduraTPS(TPS);
+  } while( u8g.nextPage() );
+  delay(2000);
+
+  u8g.firstPage();  
+  do
+  {
+    moldura();
+    temp();
+    //comb();
+    MolduraMAP(MAP);
   } while( u8g.nextPage() );
   delay(2000);
   
