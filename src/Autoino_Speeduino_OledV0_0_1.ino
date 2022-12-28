@@ -1,4 +1,4 @@
-#include "U8glib.h"
+#include <U8glib.h>
 #include <SpeedData.h>
 
 #define Uno   //Descomente essa linha caso utilizar um Arduino UNO
@@ -6,7 +6,7 @@
 
 #ifdef Uno
 #include "SoftwareSerial.h"
-SoftwareSerial mySerial(0, 1); // RX, TX
+SoftwareSerial mySerial(2, 3); // RX, TX
 #endif
 
 #ifdef Mega
@@ -32,6 +32,8 @@ char AFRChar[3] = {0}; //variavel para armazenar RPM em char
 char BATChar[3] = {0}; //variavel para armazenar RPM em char
 
 char TempAguaChar[3] = {0}; //variavel para armazenar RPM em char
+
+char TPSChar[3] = {0}; //variavel para armazenar TPS em char
 
 U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NO_ACK);  // Display which does not send AC
 
@@ -138,7 +140,7 @@ void comb()
   int x = resistencia(1);
   int vazio = 43;
   int pixel = 4;
-  int litros = 0;
+  int qtLitros = 0;
     /*
   calculo para formatar combustivel segue os seguintes passos
  pega o valor total da resistencia do medidor em ohms exemplo
@@ -166,7 +168,7 @@ pega resultado divide pelo valor aferido menos o valor minimo
   u8g.drawBox(117, x, 10,64);
   //fim do desenho de combustivel
   //calculo marcador em litros na tela
-   litros = x /4;
+   qtLitros = x /4;
   
   
   
@@ -220,6 +222,21 @@ void MolduraBateria(float intBAT)
 }
 
 
+void MolduraTPS(float intTPS) 
+{
+
+  itoa(intTPS,TPSChar, 10); //converte para inteiro para char
+
+ //Seleciona a fonte de texto
+  u8g.setFont(u8g_font_8x13B); 
+  //Rotulo
+  u8g.drawStr( 75, 15, "TPS");
+  //Dados
+  u8g.drawStr( 70, 40, TPSChar);
+  
+}
+
+
 void MolduraTempAgua(int intTempAgua) 
 {
 
@@ -236,10 +253,9 @@ void MolduraTempAgua(int intTempAgua)
 
 void setup() 
 {
-  Serial.begin(9600);
   #ifdef Uno
   mySerial.begin(115200); //Serial dedicada ao acesso Can do Speeduino via Serial3
-  //Serial.begin(115200); 
+  Serial.begin(115200); 
   #endif
 
   #ifdef Mega
@@ -271,11 +287,16 @@ int RPM = SData.getRPM(500);
 float AFR = SData.getActualAFR(100);
 float BATERIA = SData.getBattVoltage(200);
 int TEMP_AGUA = SData.getWaterTemp(100);
+int TPS = SData.getTPS(100);
+int MAP = SData.getMAP(100);
 
   Serial.println(RPM);
   Serial.println(AFR);
   Serial.println(BATERIA);
   Serial.println(TEMP_AGUA);
+  Serial.println(TPS);
+  Serial.println(MAP);
+  
   u8g.firstPage();  
   do
   {
@@ -283,6 +304,7 @@ int TEMP_AGUA = SData.getWaterTemp(100);
     temp();
     //comb();    
   } while( u8g.nextPage() );
+
 delay(2000);
   u8g.firstPage();  
   do
@@ -322,6 +344,16 @@ delay(2000);
     //comb();
     MolduraTempAgua(TEMP_AGUA);
   } while( u8g.nextPage() );
-   
+
   delay(2000);
+  u8g.firstPage();  
+  do
+  {
+    moldura();
+    temp();
+    //comb();
+    MolduraTPS(TPS);
+  } while( u8g.nextPage() );
+  delay(2000);
+  
 }
