@@ -37,6 +37,10 @@ char TPSChar[3] = {0}; //variavel para armazenar TPS em char
 
 char MAPChar[3] = {0}; //variavel para armazenar MAP em char
 
+int molduraInt = 0; //variavel para armazenar int da moldura
+
+int tempoDelay = 1000; // ms segundo
+
 U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NO_ACK);  // Display which does not send AC
 
 void moldura() 
@@ -179,19 +183,38 @@ pega resultado divide pelo valor aferido menos o valor minimo
   //linha superior informando o combustivel
   u8g.drawStr( 70, 40, combChar);
   
-}  
+}
+
+void MolduraInt(char titulo[50], int x ) 
+{
+  char molduraChar[30] = {0}; //variavel para armazenar char da moldura
+  itoa(x,molduraChar, 10); //converte inteiro para char
+ //Seleciona a fonte de texto
+  u8g.setFont(u8g_font_8x13B); 
+  //Rotulo
+  u8g.drawStr( 75, 15, titulo);
+  //Dados
+  u8g.drawStr( 70, 40, molduraChar);  
+}
+
+void MolduraBoasVindas() 
+{
+ //Seleciona a fonte de texto
+  u8g.setFont(u8g_font_8x13B); 
+  //Rotulo
+  u8g.drawStr( 0, 15, "Ola Davi e Arthur");
+  u8g.drawStr( 0, 40, "Papai ama voces");  
+}
+
 void MolduraRPM(int intRPM) 
 {
-
   itoa(intRPM,RPMChar, 10); //converte para inteiro para char
-
  //Seleciona a fonte de texto
   u8g.setFont(u8g_font_8x13B); 
   //Rotulo
   u8g.drawStr( 75, 15, "RPM");
   //Dados
-  u8g.drawStr( 70, 40, RPMChar);
-  
+  u8g.drawStr( 70, 40, RPMChar);  
 }
 
 void MolduraAFR(float intAFR) 
@@ -292,8 +315,8 @@ void setup()
   else if ( u8g.getMode() == U8G_MODE_HICOLOR ) {
     u8g.setHiColorByRGB(255,255,255);
   }
-  pinMode(pino_temp, INPUT);                          // Configuraçao do pino de leitura como entrada de dados \\ também pode ser suprimida essa linha
-  pinMode(pino_comb, INPUT);                          // Configuraçao do pino de leitura como entrada de dados \\ também pode ser suprimida essa linha
+  pinMode(pino_temp, INPUT); // Configuraçao do pino de leitura como entrada de dados \\ também pode ser suprimida essa linha
+  pinMode(pino_comb, INPUT); // Configuraçao do pino de leitura como entrada de dados \\ também pode ser suprimida essa linha
 
 }
  
@@ -314,15 +337,27 @@ int MAP = SData.getMAP(100);
   Serial.println(TPS);
   Serial.println(MAP);
   
+    u8g.firstPage();  
+  do
+  {
+    MolduraBoasVindas();
+    //moldura();
+    //temp();
+    //comb();    
+  } while( u8g.nextPage() );
+
+delay(3000);
+
   u8g.firstPage();  
   do
   {
     moldura();
     temp();
-    //comb();    
+    comb();    
   } while( u8g.nextPage() );
 
-delay(2000);
+delay(tempoDelay);
+
   u8g.firstPage();  
   do
   {
@@ -332,7 +367,8 @@ delay(2000);
     MolduraRPM(RPM);
   } while( u8g.nextPage() );
    
-  delay(2000);
+  delay(tempoDelay);
+
   u8g.firstPage();  
   do
   {
@@ -342,7 +378,8 @@ delay(2000);
     MolduraAFR(AFR);
   } while( u8g.nextPage() );
    
-  delay(2000);
+  delay(tempoDelay);
+
   u8g.firstPage();  
   do
   {
@@ -352,7 +389,8 @@ delay(2000);
     MolduraBateria(BATERIA);
   } while( u8g.nextPage() );
    
-  delay(2000);
+delay(tempoDelay);
+
   u8g.firstPage();  
   do
   {
@@ -362,7 +400,8 @@ delay(2000);
     MolduraTempAgua(TEMP_AGUA);
   } while( u8g.nextPage() );
 
-  delay(2000);
+delay(tempoDelay);
+
   u8g.firstPage();  
   do
   {
@@ -371,7 +410,8 @@ delay(2000);
     //comb();
     MolduraTPS(TPS);
   } while( u8g.nextPage() );
-  delay(2000);
+delay(tempoDelay);
+
 
   u8g.firstPage();  
   do
@@ -381,6 +421,19 @@ delay(2000);
     //comb();
     MolduraMAP(MAP);
   } while( u8g.nextPage() );
-  delay(2000);
-  
+delay(tempoDelay);
+
+
+  u8g.firstPage();  
+  do
+  {
+    moldura();
+    temp();
+    //comb();
+    MolduraInt("teste2", MAP);
+  } while( u8g.nextPage() );
+delay(tempoDelay);
+
+
+
 }
